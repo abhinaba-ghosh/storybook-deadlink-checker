@@ -1,0 +1,78 @@
+{
+  "name": "storybook-deadlink-checker",
+  "version": "0.0.0",
+  "description": "checks the all of the hyperlinks in a storybook markdown file to determine if they are alive or dead"
+  "main": "index.js",
+  "scripts": {
+    "pretest": "jshint index.js markdown-link-check",
+    "test": "mocha -R spec --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tcort/markdown-link-check.git"
+  },
+  "keywords": [
+    "markdown",
+    "md",
+    "link",
+    "hyperlink",
+    "href",
+    "check",
+    "checker"
+  ],
+  "author": "Abhinaba Ghosh <askabhinaba@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "files": [
+    "markdown-link-check"
+  ],
+  "dependencies": {
+    "async": "^3.2.2",
+    "chalk": "^4.1.2",
+    "commander": "^6.2.0",
+    "link-check": "^5.0.1",
+    "lodash": "^4.17.21",
+    "markdown-link-extractor": "^1.3.0",
+    "needle": "^3.0.0",
+    "progress": "^2.0.3"
+  },
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^9.1.3",
+    "jshint": "^2.13.1",
+    "express": "^4.17.1"
+  },
+  "jshintConfig": {
+    "esversion": 6,
+    "bitwise": true,
+    "curly": true,
+    "eqeqeq": true,
+    "forin": true,
+    "freeze": true,
+    "globalstrict": true,
+    "immed": true,
+    "indent": 4,
+    "moz": true,
+    "newcap": true,
+    "noarg": true,
+    "node": true,
+    "noempty": true,
+    "nonew": true,
+    "trailing": true,
+    "undef": true,
+    "smarttabs": true,
+    "strict": true,
+    "validthis": true,
+    "globals": {
+      "describe": false,
+      "it": false,
+      "before": false,
+      "beforeEach": false,
+      "after": false,
+      "afterEach": false
+    }
+  }
+}
