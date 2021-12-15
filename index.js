@@ -8,6 +8,8 @@ import slugPlugin from 'remark-slug';
 import { remove } from 'unist-util-remove';
 import walkSync from 'walk-sync';
 import retus from 'retus';
+import chalk from 'chalk';
+import logSymbols from 'log-symbols';
 
 const isMatch = micromatch.isMatch;
 
@@ -148,17 +150,18 @@ const errors = [];
 for (const file in cache) {
   const { externalLinks, internalLinks, filePathAbs } = cache[file];
 
+  console.log(chalk.cyan(`FILE: ${filePathAbs}`));
+
   // validate external links are valid using link-checker
   externalLinks.forEach(link => {
     try {
       retus.head(link, {
         throwHttpErrors: true,
       })
+      console.log(`\t[${logSymbols.success}]`, `${link}`);
     } catch {
       exitCode = 1;
-      console.error(
-        `External link is broken: '${link}' in file ${filePathAbs}`,
-      );
+      console.log(`\t[${logSymbols.error}]`, `${link}`);
     }
   })
   
@@ -167,30 +170,20 @@ for (const file in cache) {
 
     const [targetFile, targetId] = link.absolute.split('#');
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!cache[targetFile]) {
       if (existsSync(targetFile)) {
         readFileIntoCache(targetFile);
+        console.log(`\t[${logSymbols.success}]`, `${link.absolute}`);
       } else {
         exitCode = 1;
-
-        const message = `Internal Link is broken: '${link.absolute}' in file ${filePathAbs}`;
-
-        if (!errors.includes(message)) {
-          errors.push(message);
-          console.error(message);
-        }
-
-        return;
+        console.log(`\t[${logSymbols.error}]`, `${link.absolute}`);
       }
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (targetId && (!cache[targetFile] || !cache[targetFile].ids[targetId])) {
       exitCode = 1;
-      console.error(
-        `Anchor of link is broken: '${link.original}' in file ${filePathAbs}`,
-      );
+      console.log(`\t[${logSymbols.error}]`, `${link.original}`);
     }
   });
 }

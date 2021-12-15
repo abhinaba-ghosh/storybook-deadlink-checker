@@ -30,6 +30,9 @@
   ],
   "dependencies": {
     "@mdx-js/mdx": "1.6.22",
+    "chalk": "^5.0.0",
+    "consola": "2.15.3",
+    "log-symbols": "^5.1.0",
     "micromatch": "4.0.4",
     "remark-slug": "7.0.1",
     "retus": "1.1.2",
