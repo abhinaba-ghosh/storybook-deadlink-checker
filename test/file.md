@@ -14,3 +14,5 @@ This is a test file:
 ![img](goodbye.jpg) (dead) <!-- markdown-link-check-disable-line -->
 <!-- markdown-link-check-disable -->
 ![img](goodbye.jpg) (dead)
+
+you can get the details from [here](https://postmanlab.atlassian.net/wiki/spaces/QUAL/pages/3496707178/A+beginner+s+guide+to+unit+testing+for+Postman+app+client)

@@ -1,129 +1,198 @@
-'use strict';
+#!/usr/bin/env node
 
-const _ = require('lodash');
-const async = require('async');
-const linkCheck = require('link-check');
-const LinkCheckResult = require('link-check').LinkCheckResult;
-const markdownLinkExtractor = require('markdown-link-extractor');
-const ProgressBar = require('progress');
+import { existsSync, readFileSync } from 'fs';
+import * as path from 'path';
+import mdx from '@mdx-js/mdx';
+import micromatch from 'micromatch';
+import slugPlugin from 'remark-slug';
+import { remove } from 'unist-util-remove';
+import walkSync from 'walk-sync';
+import retus from 'retus';
 
-const envVarPatternMatcher = /(?<pattern>{{env\.(?<name>[a-zA-Z0-9\-_]+)}})/;
+const isMatch = micromatch.isMatch;
 
-/*
- * Performs some special replacements for the following patterns:
- * - {{BASEURL}} - to be replaced with opts.projectBaseUrl
- * - {{env.<env_var_name>}} - to be replaced with the environment variable specified with <env_var_name>
- */
-function performSpecialReplacements(str, opts) {
-    // replace the `{{BASEURL}}` with the opts.projectBaseUrl. Helpful to build absolute urls "relative" to project roots
-    str = str.replace('{{BASEURL}}', opts.projectBaseUrl);
-
-    // replace {{env.<env_var_name>}} with the corresponding environment variable or an empty string if none is set.
-    var envVarMatch;
-    do {
-        envVarMatch = envVarPatternMatcher.exec(str);
-
-        if(!envVarMatch) {
-            break;
-        }
-
-        var envVarPattern = envVarMatch.groups.pattern;
-        var envVarName = envVarMatch.groups.name;
-
-        var envVarPatternReplacement = '';
-
-        if(envVarName in process.env) {
-            envVarPatternReplacement = process.env[envVarName];
-        }
-
-        str = str.replace(envVarPattern, envVarPatternReplacement);
-    } while (true);
-
-    return str;
+function remarkRemoveCodeNodes() {
+  return function transformer(tree) {
+    remove(tree, 'code');
+  };
 }
 
-module.exports = function markdownLinkCheck(markdown, opts, callback) {
-    if (arguments.length === 2 && typeof opts === 'function') {
-        // optional 'opts' not supplied.
-        callback = opts;
-        opts = {};
+function removeMarkdownCodeBlocks(markdown) {
+  return markdown.replace(/```[\s\S]+?```/g, '');
+}
+
+const cache = {};
+let exitCode = 0;
+
+const dir = process.argv[2] || '.';
+const basepath = process.argv[3] || '.';
+const ignorePattern = process.argv[4];
+
+const filePaths = walkSync(dir, { directories: false });
+
+function fillCache(
+  markdownOrJsx,
+  filePath,
+  filePathAbs,
+) {
+  markdownOrJsx.replace(
+    /\s+(?:(?:"(?:id|name)":\s*)|(?:(?:id|name)=))"([^"]+)"/g,
+    (str, match) => {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (match && match.match) {
+        cache[filePathAbs].ids[match] = true;
+      }
+      // Discard replacement
+      return '';
+    },
+  );
+
+  markdownOrJsx.replace(
+    /\s+(?:(?:"(?:href|to|src)":\s*)|(?:(?:href|to|src)=))"([^"]+)"/g,
+    (str, match) => {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (match && match.match) {
+        if (
+          !match.match(
+            /(^https?:\/\/)|(^#)|(^[^:]+:.*)|(\.mdx?(#[a-zA-Z0-9._,-]*)?$)/,
+          )
+        ) {
+          if (match.match(/\/$/)) {
+            match += 'index.mdx';
+          } else if (match.match(/\/#[^/]+$/)) {
+            match = match.replace(/(\/)(#[^/]+)$/, '$1index.mdx$2');
+          }
+        }
+
+        if (match.match(/^https?:\/\//)) {
+          cache[filePathAbs].externalLinks.push(match);
+        } else if (match.match(/^[^:]+:.*/)) {
+          // ignore links such as "mailto:" or "javascript:"
+        } else {
+          let absolute;
+
+          const isAnchorLink = match.match(/^#/);
+          const isRootRelativeLink = match.match(/^\//);
+
+          if (isAnchorLink) {
+            match = filePath + match;
+            absolute = path.resolve(path.join(match));
+          } else if (isRootRelativeLink) {
+            absolute = path.resolve(path.join(basepath, match));
+          } else {
+            const result = filePath.match(/^(.+\/)[^/]+$/);
+            const filePathBase = result?.[1];
+            absolute = path.resolve(filePathBase + '/' + match);
+          }
+
+          cache[filePathAbs].internalLinks.push({
+            original: match,
+            absolute,
+          });
+        }
+      }
+      // Discard replacement
+      return '';
+    },
+  );
+}
+
+function readFileIntoCache(filePath) {
+  const filePathAbs = path.resolve(filePath);
+  const fileExt = filePath.split('.').pop();
+
+  if (!fileExt || !['mdx', 'md'].includes(fileExt)) {
+    return;
+  }
+
+  const markdown = removeMarkdownCodeBlocks(
+    readFileSync(filePathAbs).toString(),
+  );
+
+  let jsx = '';
+
+  try {
+    jsx = mdx.sync(markdown, {
+      remarkPlugins: [slugPlugin, remarkRemoveCodeNodes],
+    });
+  } catch (e) {
+    // Fail if there was an error parsing a mdx/md file
+    if (fileExt === 'mdx' || fileExt === 'md') {
+      console.error('Unable to parse mdx to jsx: ' + filePath);
+      throw e;
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (!cache[filePathAbs]) {
+    cache[filePathAbs] = {
+      filePath,
+      filePathAbs,
+      externalLinks: [],
+      internalLinks: [],
+      ids: {},
+    };
+  }
+
+  fillCache(jsx, filePath, filePathAbs);
+  fillCache(markdown, filePath, filePathAbs);
+}
+
+filePaths.forEach((relativePath) => {
+  const filePath = path.join(dir, relativePath);
+  readFileIntoCache(filePath);
+});
+
+const errors = [];
+
+for (const file in cache) {
+  const { externalLinks, internalLinks, filePathAbs } = cache[file];
+
+  // validate external links are valid using link-checker
+  externalLinks.forEach(link => {
+    try {
+      retus.head(link, {
+        throwHttpErrors: true,
+      })
+    } catch {
+      exitCode = 1;
+      console.error(
+        `External link is broken: '${link}' in file ${filePathAbs}`,
+      );
+    }
+  })
+  
+  internalLinks.forEach((link) => {
+    if (ignorePattern && isMatch(link.original, ignorePattern)) return;
+
+    const [targetFile, targetId] = link.absolute.split('#');
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (!cache[targetFile]) {
+      if (existsSync(targetFile)) {
+        readFileIntoCache(targetFile);
+      } else {
+        exitCode = 1;
+
+        const message = `Internal Link is broken: '${link.absolute}' in file ${filePathAbs}`;
+
+        if (!errors.includes(message)) {
+          errors.push(message);
+          console.error(message);
+        }
+
+        return;
+      }
     }
 
-    if(!opts.ignoreDisable) {
-        markdown = [
-            /(<!--[ \t]+markdown-link-check-disable[ \t]+-->[\S\s]*?<!--[ \t]+markdown-link-check-enable[ \t]+-->)/mg,
-            /(<!--[ \t]+markdown-link-check-disable[ \t]+-->[\S\s]*(?!<!--[ \t]+markdown-link-check-enable[ \t]+-->))/mg,
-            /(<!--[ \t]+markdown-link-check-disable-next-line[ \t]+-->\r?\n[^\r\n]*)/mg,
-            /([^\r\n]*<!--[ \t]+markdown-link-check-disable-line[ \t]+-->[^\r\n]*)/mg
-        ].reduce(function(_markdown, disablePattern) {
-            return _markdown.replace(new RegExp(disablePattern), '');
-        }, markdown);
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (targetId && (!cache[targetFile] || !cache[targetFile].ids[targetId])) {
+      exitCode = 1;
+      console.error(
+        `Anchor of link is broken: '${link.original}' in file ${filePathAbs}`,
+      );
     }
+  });
+}
 
-    const linksCollection = _.uniq(markdownLinkExtractor(markdown));
-    const bar = (opts.showProgressBar) ?
-        new ProgressBar('Checking... [:bar] :percent', {
-            complete: '=',
-            incomplete: ' ',
-            width: 25,
-            total: linksCollection.length
-        }) : undefined;
-
-    async.mapLimit(linksCollection, 2, function (link, callback) {
-        if (opts.ignorePatterns) {
-            const shouldIgnore = opts.ignorePatterns.some(function(ignorePattern) {
-                return ignorePattern.pattern instanceof RegExp ? ignorePattern.pattern.test(link) : (new RegExp(ignorePattern.pattern)).test(link) ? true : false;
-            });
-
-            if (shouldIgnore) {
-                const result = new LinkCheckResult(opts, link, 0, undefined);
-                result.status = 'ignored'; // custom status for ignored links
-                callback(null, result);
-                return;
-            }
-        }
-
-        if (opts.replacementPatterns) {
-            for (let replacementPattern of opts.replacementPatterns) {
-                let pattern = replacementPattern.pattern instanceof RegExp ? replacementPattern.pattern : new RegExp(replacementPattern.pattern);
-                link = link.replace(pattern, performSpecialReplacements(replacementPattern.replacement, opts));
-            }
-        }
-
-        // Make sure it is not undefined and that the appropriate headers are always recalculated for a given link.
-        opts.headers = {};
-
-        if (opts.httpHeaders) {
-            for (const httpHeader of opts.httpHeaders) {
-                if (httpHeader.headers) {
-                    for (const header of Object.keys(httpHeader.headers)) {
-                        httpHeader.headers[header] = performSpecialReplacements(httpHeader.headers[header], opts);
-                    }
-                }
-
-                for (const url of httpHeader.urls) {
-                    if (link.startsWith(url)) {
-                        Object.assign(opts.headers, httpHeader.headers);
-
-                        // The headers of this httpHeader has been applied, the other URLs of this httpHeader don't need to be evaluated any further.
-                        break;
-                    }
-                }
-            }
-        }
-
-        linkCheck(link, opts, function (err, result) {
-
-            if (opts.showProgressBar) {
-                bar.tick();
-            }
-
-            if (err) {
-                result = new LinkCheckResult(opts, link, 500, err);
-                result.status = 'error'; // custom status for errored links
-            }
-
-            callback(null, result);
-        });
-    }, callback);
-};
+process.exit(exitCode);
