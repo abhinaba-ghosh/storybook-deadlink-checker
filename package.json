@@ -1,43 +1,43 @@
 {
-  "name": "storybook-deadlink-checker",
-  "version": "0.0.0",
-  "description": "checks the all of the hyperlinks in a storybook markdown file to determine if they are alive or dead",
-  "main": "index.js",
-  "scripts": {
-    "test": "node index.js"
-  },
-  "type": "module",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/tcort/markdown-link-check.git"
-  },
-  "keywords": [
-    "markdown",
-    "md",
-    "link",
-    "hyperlink",
-    "href",
-    "check",
-    "checker"
-  ],
-  "author": "Abhinaba Ghosh <askabhinaba@gmail.com>",
-  "bugs": {
-    "url": ""
-  },
-  "homepage": "",
-  "files": [
-    "markdown-link-check"
-  ],
-  "dependencies": {
-    "@mdx-js/mdx": "1.6.22",
-    "chalk": "^5.0.0",
-    "consola": "2.15.3",
-    "log-symbols": "^5.1.0",
-    "micromatch": "4.0.4",
-    "remark-slug": "7.0.1",
-    "retus": "1.1.2",
-    "unist-util-remove": "3.1.0",
-    "walk-sync": "3.0.0"
-  },
-  "devDependencies": {}
+	"name": "storybook-deadlink-checker",
+	"version": "0.0.0",
+	"description": "checks the all of the hyperlinks in a storybook markdown file to determine if they are alive or dead",
+	"main": "index.js",
+	"scripts": {
+		"test": "node index.js"
+	},
+	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/tcort/markdown-link-check.git"
+	},
+	"keywords": [
+		"markdown",
+		"md",
+		"link",
+		"hyperlink",
+		"href",
+		"check",
+		"checker"
+	],
+	"author": "Abhinaba Ghosh <askabhinaba@gmail.com>",
+	"bugs": {
+		"url": ""
+	},
+	"homepage": "",
+	"files": [
+		"markdown-link-check"
+	],
+	"dependencies": {
+		"@mdx-js/mdx": "1.6.22",
+		"chalk": "^5.0.0",
+		"log-symbols": "^5.1.0",
+		"micromatch": "4.0.4",
+		"puppeteer": "^13.0.0",
+		"remark-slug": "7.0.1",
+		"retus": "1.1.2",
+		"unist-util-remove": "3.1.0",
+		"walk-sync": "3.0.0"
+	},
+	"devDependencies": {}
 }
