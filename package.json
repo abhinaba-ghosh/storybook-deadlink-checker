@@ -3,6 +3,7 @@
 	"version": "0.0.1",
 	"description": "checks the all of the hyperlinks in a storybook markdown file to determine if they are alive or dead",
 	"main": "index.js",
+	"bin": "./index.js",
 	"scripts": {
 		"test": "node index.js"
 	},
