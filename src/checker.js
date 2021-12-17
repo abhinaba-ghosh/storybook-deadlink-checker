@@ -40,16 +40,13 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 				linkCache[targetFile] &&
 				linkCache[targetFile].ids[targetId]
 			) {
-				console.log(`\t[${logSymbols.success}]`, `${link.original}`);
+				console.log(`\t[${logSymbols.success}]`, `${targetId}`);
 			}
 
 			if (!linkCache[targetFile]) {
 				if (existsSync(targetFile)) {
 					readFileIntoCache(linkCache, targetFile);
-					console.log(
-						`\t[${logSymbols.success}]`,
-						`${link.original}`
-					);
+					console.log(`\t[${logSymbols.success}]`, `${targetId}`);
 				} else {
 					errorFiles.push(filePathAbs);
 					console.log(`\t[${logSymbols.error}]`, `${link.original}`);

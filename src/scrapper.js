@@ -7,7 +7,10 @@ export const validateSidebarLinks = async (
 	filePathAbs,
 	errorFiles
 ) => {
-	const browser = await puppeteer.launch({ headless: true });
+	const browser = await puppeteer.launch({
+		headless: true,
+		args: ['--no-sandbox'],
+	});
 	const page = await browser.newPage();
 
 	for (const link of links) {
