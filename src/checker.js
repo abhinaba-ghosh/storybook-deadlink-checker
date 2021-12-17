@@ -20,7 +20,7 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 		// validate external links are valid using link - checker
 		externalLinks.forEach((link) => {
 			try {
-				retus.head(link, {
+				retus.get(link, {
 					throwHttpErrors: true,
 				});
 				console.log(`\t[${logSymbols.success}]`, `${link}`);
@@ -45,7 +45,6 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 
 			if (!linkCache[targetFile]) {
 				if (existsSync(targetFile)) {
-					console.log(`targetFile: ${targetFile}`);
 					readFileIntoCache(linkCache, targetFile);
 					console.log(
 						`\t[${logSymbols.success}]`,

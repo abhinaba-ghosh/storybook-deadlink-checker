@@ -41,7 +41,7 @@ const fillCache = (cache, markdownOrJsx, filePath, filePathAbs, basepath) => {
 						match = match.replace(/(\/)(#[^/]+)$/, '$1index.mdx$2');
 					}
 				}
-				if (match.match(/--page|--story|components-|docs/)) {
+				if (str.includes('kind=') || str.includes('path=/docs/')) {
 					const formattedLink = formatLiveLinks(match);
 					if (
 						!cache[filePathAbs].storybookLinks.includes(
@@ -51,7 +51,9 @@ const fillCache = (cache, markdownOrJsx, filePath, filePathAbs, basepath) => {
 						cache[filePathAbs].storybookLinks.push(formattedLink);
 					}
 				} else if (match.match(/^https?:\/\//)) {
-					cache[filePathAbs].externalLinks.push(match);
+					if (!cache[filePathAbs].externalLinks.includes(match)) {
+						cache[filePathAbs].externalLinks.push(match);
+					}
 				} else if (match.match(/^[^:]+:.*/)) {
 					// ignore links such as "mailto:" or "javascript:"
 				} else {

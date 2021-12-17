@@ -8,10 +8,6 @@
 		"test": "node index.js"
 	},
 	"type": "module",
-	"repository": {
-		"type": "git",
-		"url": "git://github.com/tcort/markdown-link-check.git"
-	},
 	"keywords": [
 		"markdown",
 		"md",
@@ -22,13 +18,14 @@
 		"checker"
 	],
 	"author": "Abhinaba Ghosh <askabhinaba@gmail.com>",
-	"bugs": {
-		"url": ""
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/abhinaba-ghosh/storybook-deadlink-checker.git"
 	},
-	"homepage": "",
-	"files": [
-		"markdown-link-check"
-	],
+	"bugs": {
+		"url": "https://github.com/abhinaba-ghosh/storybook-deadlink-checker/issues"
+	},
+	"homepage": "https://github.com/abhinaba-ghosh/storybook-deadlink-checker#readme",
 	"dependencies": {
 		"@mdx-js/mdx": "1.6.22",
 		"chalk": "^5.0.0",
