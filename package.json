@@ -1,6 +1,6 @@
 {
 	"name": "storybook-deadlink-checker",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"description": "checks the all of the hyperlinks in a storybook markdown file to determine if they are alive or dead",
 	"main": "index.js",
 	"scripts": {
