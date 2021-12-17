@@ -1,29 +1,36 @@
 #!/usr/bin/env node
 
 import walkSync from 'walk-sync';
+import chalk from 'chalk';
 
-import { fetchLinks } from './src/utils.js';
-import { checkLinks } from './src/file-link-checker.js';
-// import { validateSidebarLinks } from './src/live-link-checker.js';
-
-let exitCode = 0;
+import { fetchLinks, filterArray } from './src/utils.js';
+import { checkLinks } from './src/checker.js';
 
 const dir = process.argv[2] || '.';
-const basePath = process.argv[3] || '.';
-const ignorePattern = process.argv[4];
+const storybookURL = process.argv[3];
+const basePath = process.argv[4] || '.';
+const ignorePattern = process.argv[5];
 
 const filePaths = walkSync(dir, { directories: false });
-const linkObject = fetchLinks(dir, filePaths, basePath)
+const linkObject = fetchLinks(dir, filePaths, basePath);
 
-// console.log(linkObject.storybookLinks);
-
-checkLinks(linkObject, ignorePattern).then((p) => { console.log('done!'); }).catch((err) => {
-  throw err;
-});
-
-// checkFileLinks(linkObject, ignorePattern);
-
-
-
-// process.exit(exitCode);
-
+checkLinks(linkObject, storybookURL, ignorePattern)
+	.then((errFiles) => {
+		if (errFiles.length > 0) {
+			console.log(
+				'\n\n',
+				chalk.red(
+					`${errFiles.length} files have broken links. Please fix them before committing.`
+				)
+			);
+			console.log(chalk.red(filterArray(errFiles).join('\n')));
+			throw new Error(
+				`${errFiles.length} files have broken links. Please fix them before committing.`
+			);
+		} else {
+			console.log('\n\n', chalk.green(`No broken links found.`));
+		}
+	})
+	.catch((err) => {
+		throw err;
+	});

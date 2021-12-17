@@ -39,5 +39,8 @@
 		"unist-util-remove": "3.1.0",
 		"walk-sync": "3.0.0"
 	},
-	"devDependencies": {}
+	"devDependencies": {
+		"@babel/cli": "^7.16.0",
+		"@babel/core": "^7.16.5"
+	}
 }
