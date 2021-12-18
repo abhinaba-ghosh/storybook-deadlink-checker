@@ -14,6 +14,7 @@ const options = yargs(hideBin(process.argv))
 			alias: 'directory',
 			description: 'directory path',
 			type: 'string',
+			required: true,
 		},
 		url: {
 			alias: 'storybook-url',
