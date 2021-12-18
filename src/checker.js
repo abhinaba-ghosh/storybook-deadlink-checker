@@ -91,7 +91,7 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 		}
 	}
 
-	if (storybookURL) {
+	if (browser) {
 		await killScrapperInstance(browser);
 	}
 
