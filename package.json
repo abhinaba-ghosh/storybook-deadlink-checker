@@ -1,7 +1,7 @@
 {
 	"name": "storybook-deadlink-checker",
 	"version": "0.0.4",
-	"description": "checks the all of the hyperlinks in a storybook markdown file to determine if they are alive or dead",
+	"description": "checks the all of the hyperlinks in a markdown/storybook-markdown (md, mdx) file to determine if they are alive or dead",
 	"main": "index.js",
 	"bin": "./index.js",
 	"scripts": {
@@ -9,13 +9,15 @@
 	},
 	"type": "module",
 	"keywords": [
+		"storybook",
 		"markdown",
 		"md",
 		"link",
 		"hyperlink",
 		"href",
 		"check",
-		"checker"
+		"checker",
+		"broken link"
 	],
 	"author": "Abhinaba Ghosh <askabhinaba@gmail.com>",
 	"repository": {
