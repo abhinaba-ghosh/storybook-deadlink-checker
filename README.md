@@ -38,6 +38,8 @@ $ npx storybook-deadlink-checker --dir="./path/to/folder"
 
 ### Check storybook links along with anchor and external links
 
+The magic is really simple. The scrapper finds all the `<LinkTo kind='*'/>` , `[Link](?path=/docs/*)` and `<a href="?path=/docs/*">Link</a>` tags in the storybook stories and checks if the links are valid in the hosted/local storybook build.
+
 To validate the story links you need to have a storybook url. You can either use the live build url or the local build url.
 
 For local build url, you can use the following command:
