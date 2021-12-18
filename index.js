@@ -58,18 +58,14 @@ if (onlyFail) {
 checkLinks(linkObject, storybookURL, ignorePattern)
 	.then((errFiles) => {
 		if (errFiles.length > 0) {
+			const filteredFiles = filterArray(errFiles);
 			console.error(
 				'\n\n',
 				chalk.red(
-					`${errFiles.length} files have broken links. Please fix them before committing.`
+					`${filteredFiles.length} files have broken links. Please fix them before committing.`
 				)
 			);
-			console.error(chalk.red(filterArray(errFiles).join('\n')));
-			console.error(
-				chalk.red(
-					`${errFiles.length} files have broken links. Please fix them before committing.`
-				)
-			);
+			console.error(chalk.red(filteredFiles.join('\n')));
 			process.exitCode = 1;
 		} else {
 			console.log('\n\n', chalk.green(`No broken links found.`));
