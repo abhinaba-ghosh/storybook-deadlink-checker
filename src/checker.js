@@ -3,13 +3,22 @@ import retus from 'retus';
 import chalk from 'chalk';
 import logSymbols from 'log-symbols';
 import micromatch from 'micromatch';
-import { validateSidebarLinks } from './scrapper.js';
+import {
+	getScrapperInstance,
+	killScrapperInstance,
+	validateSidebarLinks,
+} from './scrapper.js';
 import { readFileIntoCache } from './utils.js';
 
 const isMatch = micromatch.isMatch;
 
 export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 	const errorFiles = [];
+	let browser;
+
+	if (storybookURL) {
+		browser = await getScrapperInstance();
+	}
 
 	for (const file in linkCache) {
 		const { storybookLinks, externalLinks, internalLinks, filePathAbs } =
@@ -73,12 +82,17 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 
 		if (storybookURL) {
 			await validateSidebarLinks(
+				browser,
 				storybookURL,
 				storybookLinks,
 				filePathAbs,
 				errorFiles
 			);
 		}
+	}
+
+	if (storybookURL) {
+		await killScrapperInstance(browser);
 	}
 
 	return errorFiles;

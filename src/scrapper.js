@@ -1,18 +1,27 @@
 import puppeteer from 'puppeteer';
 import logSymbols from 'log-symbols';
 
+export const getScrapperInstance = async () => {
+	const browser = await puppeteer.launch({
+		headless: true,
+		args: ['--no-sandbox'],
+	});
+
+	return browser;
+};
+
+export const killScrapperInstance = async (browser) => {
+	await browser.close();
+};
+
 export const validateSidebarLinks = async (
+	browser,
 	storybookURL,
 	links,
 	filePathAbs,
 	errorFiles
 ) => {
-	const browser = await puppeteer.launch({
-		headless: true,
-		args: ['--no-sandbox'],
-	});
 	const page = await browser.newPage();
-
 	for (const link of links) {
 		const finalLink = `${storybookURL}/iframe.html?id=${link}`;
 		await page.goto(finalLink, { waitUntil: 'domcontentloaded' });
@@ -31,5 +40,4 @@ export const validateSidebarLinks = async (
 			console.log(`\t[${logSymbols.success}] ${link}`);
 		}
 	}
-	await browser.close();
 };
