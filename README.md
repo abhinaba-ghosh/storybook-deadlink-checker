@@ -33,7 +33,7 @@ Options:
 ### Check Anchor and External Link used in md and mdx files
 
 ```
-$ npx storybook-deadlink-checker ./path/to/folder
+$ npx storybook-deadlink-checker --dir="./path/to/folder"
 ```
 
 ### Check storybook links along with anchor and external links
@@ -46,20 +46,20 @@ For local build url, you can use the following command:
 $ npx build-storybook -o ./local-storybook-build-folder
 
 // then validate the links
-$ npx storybook-deadlink-checker ./path/to/folder "file:///${PWD}/local-storybook-build-folder"
+$ npx storybook-deadlink-checker --dir="./path/to/folder" --url="file:///${PWD}/local-storybook-build-folder"
 ```
 
 For live build url, you can use the following command:
 
 ```
 $ npx start-storybook -p 9009 --no-manager-cache -s public
-$ npx storybook-deadlink-checker ./path/to/folder "http://localhost:9009"
+$ npx storybook-deadlink-checker --dir="./path/to/folder" --url="http://localhost:9009"
 ```
 
 ### Only show failed links
 
 ```
-$ npx storybook-deadlink-checker ./path/to/folder "http://localhost:9009" --onlyFail
+$ npx storybook-deadlink-checker --dir="./path/to/folder" --url="http://localhost:9009" --onlyFail
 ```
 
 ## Tell me your issues
