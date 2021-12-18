@@ -14,7 +14,7 @@ const removeMarkdownCodeBlocks = (markdown) => {
 	return markdown.replace(/```[\s\S]+?```/g, '');
 };
 
-const fillCache = (cache, markdownOrJsx, filePath, filePathAbs, basepath) => {
+const fillCache = (cache, markdownOrJsx, filePath, filePathAbs) => {
 	markdownOrJsx.replace(
 		/\s+(?:(?:"(?:id|name)":\s*)|(?:(?:id|name)=))"([^"]+)"/g,
 		(str, match) => {
@@ -65,8 +65,6 @@ const fillCache = (cache, markdownOrJsx, filePath, filePathAbs, basepath) => {
 					if (isAnchorLink) {
 						match = filePath + match;
 						absolute = path.resolve(path.join(match));
-					} else if (isRootRelativeLink) {
-						absolute = path.resolve(path.join(basepath, match));
 					} else {
 						const result = filePath.match(/^(.+\/)[^/]+$/);
 						const filePathBase = result?.[1];
@@ -85,7 +83,7 @@ const fillCache = (cache, markdownOrJsx, filePath, filePathAbs, basepath) => {
 	);
 };
 
-export const readFileIntoCache = (cache, filePath, basePath) => {
+export const readFileIntoCache = (cache, filePath) => {
 	const filePathAbs = path.resolve(filePath);
 	const fileExt = filePath.split('.').pop();
 
@@ -123,16 +121,16 @@ export const readFileIntoCache = (cache, filePath, basePath) => {
 		};
 	}
 
-	fillCache(cache, jsx, filePath, filePathAbs, basePath);
-	fillCache(cache, markdown, filePath, filePathAbs, basePath);
+	fillCache(cache, jsx, filePath, filePathAbs);
+	fillCache(cache, markdown, filePath, filePathAbs);
 };
 
-export const fetchLinks = (dir, filePaths, basePath) => {
+export const fetchLinks = (dir, filePaths) => {
 	const cache = {};
 
 	filePaths.forEach((relativePath) => {
 		const filePath = path.join(dir, relativePath);
-		readFileIntoCache(cache, filePath, basePath);
+		readFileIntoCache(cache, filePath);
 	});
 
 	return cache;

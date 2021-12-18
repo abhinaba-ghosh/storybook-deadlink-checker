@@ -15,7 +15,7 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 		const { storybookLinks, externalLinks, internalLinks, filePathAbs } =
 			linkCache[file];
 
-		console.log(chalk.cyan(`FILE: ${filePathAbs}`));
+		console.info(chalk.cyan(`FILE: ${filePathAbs}`));
 
 		// validate external links are valid using link - checker
 		externalLinks.forEach((link) => {
@@ -40,16 +40,22 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 				linkCache[targetFile] &&
 				linkCache[targetFile].ids[targetId]
 			) {
-				console.log(`\t[${logSymbols.success}]`, `${targetId}`);
+				console.log(`\t[${logSymbols.success}]`, `#${targetId}`);
 			}
 
 			if (!linkCache[targetFile]) {
 				if (existsSync(targetFile)) {
 					readFileIntoCache(linkCache, targetFile);
-					console.log(`\t[${logSymbols.success}]`, `${targetId}`);
+					console.log(
+						`\t[${logSymbols.success}]`,
+						targetId ? `#${targetId}` : link.original
+					);
 				} else {
 					errorFiles.push(filePathAbs);
-					console.log(`\t[${logSymbols.error}]`, `${link.original}`);
+					console.error(
+						`\t[${logSymbols.error}]`,
+						targetId ? `#${targetId}` : link.original
+					);
 				}
 			}
 
@@ -58,7 +64,10 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 				(!linkCache[targetFile] || !linkCache[targetFile].ids[targetId])
 			) {
 				errorFiles.push(filePathAbs);
-				console.log(`\t[${logSymbols.error}]`, `${link.original}`);
+				console.error(
+					`\t[${logSymbols.error}]`,
+					targetId ? `#${targetId}` : link.original
+				);
 			}
 		});
 

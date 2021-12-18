@@ -15,7 +15,7 @@ export const validateSidebarLinks = async (
 
 	for (const link of links) {
 		const finalLink = `${storybookURL}/iframe.html?id=${link}`;
-		await page.goto(finalLink, { waitUntil: 'networkidle2' });
+		await page.goto(finalLink, { waitUntil: 'domcontentloaded' });
 
 		const storyRootContent = await page.$eval('#docs-root', (element) => {
 			return element.innerHTML;
@@ -26,7 +26,7 @@ export const validateSidebarLinks = async (
 
 		if (!storyRootContent && !docsRootContent) {
 			errorFiles.push(filePathAbs);
-			console.log(`\t[${logSymbols.error}] ${link}`);
+			console.error(`\t[${logSymbols.error}] ${link}`);
 		} else {
 			console.log(`\t[${logSymbols.success}] ${link}`);
 		}

@@ -28,17 +28,18 @@
 	"homepage": "https://github.com/abhinaba-ghosh/storybook-deadlink-checker#readme",
 	"dependencies": {
 		"@mdx-js/mdx": "1.6.22",
-		"chalk": "^5.0.0",
-		"log-symbols": "^5.1.0",
+		"chalk": "5.0.0",
+		"log-symbols": "5.1.0",
 		"micromatch": "4.0.4",
-		"puppeteer": "^13.0.0",
+		"puppeteer": "13.0.0",
 		"remark-slug": "7.0.1",
 		"retus": "1.1.2",
 		"unist-util-remove": "3.1.0",
-		"walk-sync": "3.0.0"
+		"walk-sync": "3.0.0",
+		"yargs": "17.0.1"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.16.0",
-		"@babel/core": "^7.16.5"
+		"@babel/cli": "7.16.0",
+		"@babel/core": "7.16.5"
 	}
 }
