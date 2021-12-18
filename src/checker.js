@@ -14,6 +14,7 @@ const isMatch = micromatch.isMatch;
 
 export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 	const errorFiles = [];
+	const errorLinks = [];
 	let browser;
 
 	if (storybookURL) {
@@ -35,6 +36,7 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 				console.log(`\t[${logSymbols.success}]`, `${link}`);
 			} catch {
 				errorFiles.push(filePathAbs);
+				errorLinks.push(link);
 				console.log(`\t[${logSymbols.error}]`, `${link}`);
 			}
 		});
@@ -61,6 +63,7 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 					);
 				} else {
 					errorFiles.push(filePathAbs);
+					errorLinks.push(link);
 					console.error(
 						`\t[${logSymbols.error}]`,
 						targetId ? `#${targetId}` : link.original
@@ -81,14 +84,32 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 		});
 
 		if (storybookURL) {
-			await validateSidebarLinks(
-				browser,
-				storybookURL,
-				storybookLinks,
-				filePathAbs,
-				errorFiles
-			);
+			try {
+				await validateSidebarLinks(
+					browser,
+					storybookURL,
+					storybookLinks,
+					filePathAbs,
+					errorFiles,
+					errorLinks
+				);
+			} catch (err) {
+				throw err;
+			}
 		}
+
+		const errorLinksCount = errorLinks.length;
+		console.info(
+			`\t${logSymbols.info} ${chalk[
+				errorLinksCount > 0 ? 'red' : 'green'
+			](
+				`validated ${
+					storybookLinks.length +
+					externalLinks.length +
+					internalLinks.length
+				} links, ${errorLinks.length} failed`
+			)}`
+		);
 	}
 
 	if (browser) {

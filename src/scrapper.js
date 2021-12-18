@@ -19,7 +19,8 @@ export const validateSidebarLinks = async (
 	storybookURL,
 	links,
 	filePathAbs,
-	errorFiles
+	errorFiles,
+	errorLinks
 ) => {
 	const page = await browser.newPage();
 	for (const link of links) {
@@ -35,6 +36,7 @@ export const validateSidebarLinks = async (
 
 		if (!storyRootContent && !docsRootContent) {
 			errorFiles.push(filePathAbs);
+			errorLinks.push(link);
 			console.error(`\t[${logSymbols.error}] ${link}`);
 		} else {
 			console.log(`\t[${logSymbols.success}] ${link}`);
