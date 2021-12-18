@@ -87,8 +87,7 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 					storybookURL,
 					storybookLinks,
 					filePathAbs,
-					errorFiles,
-					errorLinks
+					errorFiles
 				);
 			} catch (err) {
 				throw err;
