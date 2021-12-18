@@ -4,7 +4,7 @@
 
 # Storybook Deadlink Checker
 
-A lightweight dead-link scrapper for md and mdx files. It validates dead-links for [storybook](https://storybook.js.org/) stories where links are created using the [@storybook/addon-links](https://storybook.js.org/addons/@storybook/addon-links) package.
+A lightweight dead-link scrapper for md and mdx files. It also validates dead-links for [storybook](https://storybook.js.org/) stories where links are created using the [@storybook/addon-links](https://storybook.js.org/addons/@storybook/addon-links) package.
 
 ## Installation
 
