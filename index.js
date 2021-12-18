@@ -55,17 +55,17 @@ if (onlyFail) {
 	console.log = function () {};
 }
 
-checkLinks(linkObject, storybookURL, ignorePattern, onlyFail)
+checkLinks(linkObject, storybookURL, ignorePattern)
 	.then((errFiles) => {
 		if (errFiles.length > 0) {
-			console.log(
+			console.error(
 				'\n\n',
 				chalk.red(
 					`${errFiles.length} files have broken links. Please fix them before committing.`
 				)
 			);
-			console.log(chalk.red(filterArray(errFiles).join('\n')));
-			console.log(
+			console.error(chalk.red(filterArray(errFiles).join('\n')));
+			console.error(
 				chalk.red(
 					`${errFiles.length} files have broken links. Please fix them before committing.`
 				)
@@ -77,7 +77,7 @@ checkLinks(linkObject, storybookURL, ignorePattern, onlyFail)
 		process.exit();
 	})
 	.catch((err) => {
-		console.log(err);
+		console.error(err);
 		process.exitCode = 1;
 		process.exit();
 	});

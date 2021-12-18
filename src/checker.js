@@ -14,7 +14,6 @@ const isMatch = micromatch.isMatch;
 
 export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 	const errorFiles = [];
-	const errorLinks = [];
 	let browser;
 
 	if (storybookURL) {
@@ -22,10 +21,12 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 	}
 
 	for (const file in linkCache) {
+		const errorLinks = [];
+
 		const { storybookLinks, externalLinks, internalLinks, filePathAbs } =
 			linkCache[file];
 
-		console.info(chalk.cyan(`FILE: ${filePathAbs}`));
+		console.info(chalk.cyan(`\nChecking FILE: ${filePathAbs}`));
 
 		// validate external links are valid using link - checker
 		externalLinks.forEach((link) => {
@@ -37,7 +38,7 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 			} catch {
 				errorFiles.push(filePathAbs);
 				errorLinks.push(link);
-				console.log(`\t[${logSymbols.error}]`, `${link}`);
+				console.error(`\t[${logSymbols.error}]`, `${link}`);
 			}
 		});
 
@@ -76,6 +77,7 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 				(!linkCache[targetFile] || !linkCache[targetFile].ids[targetId])
 			) {
 				errorFiles.push(filePathAbs);
+				errorLinks.push(link);
 				console.error(
 					`\t[${logSymbols.error}]`,
 					targetId ? `#${targetId}` : link.original
@@ -103,11 +105,9 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 			`\t${logSymbols.info} ${chalk[
 				errorLinksCount > 0 ? 'red' : 'green'
 			](
-				`validated ${
-					storybookLinks.length +
-					externalLinks.length +
-					internalLinks.length
-				} links, ${errorLinks.length} failed`
+				errorLinksCount == 0
+					? `RESULT: Passed`
+					: `RESULT: ${errorLinks.length} Failed`
 			)}`
 		);
 	}
