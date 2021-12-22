@@ -161,7 +161,5 @@ const formatLiveLinks = (link) => {
 
 	const formattedLink = `${link}&viewMode=${linkPrefix}`;
 
-	console.log('formattedLink:', formattedLink);
-
 	return formattedLink;
 };

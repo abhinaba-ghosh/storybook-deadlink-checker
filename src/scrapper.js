@@ -3,7 +3,7 @@ import logSymbols from 'log-symbols';
 
 export const getScrapperInstance = async () => {
 	const browser = await puppeteer.launch({
-		headless: false,
+		headless: true,
 		args: ['--no-sandbox'],
 	});
 
