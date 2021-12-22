@@ -3,11 +3,11 @@ import logSymbols from 'log-symbols';
 
 export const getScrapperInstance = async () => {
 	const browser = await puppeteer.launch({
-		headless: true,
+		headless: false,
 		args: ['--no-sandbox'],
 	});
 
-	return browser;
+	return browser.newPage();
 };
 
 export const killScrapperInstance = async (browser) => {
@@ -21,7 +21,7 @@ export const validateSidebarLinks = async (
 	filePathAbs,
 	errorFiles
 ) => {
-	const page = await browser.newPage();
+	const page = await browser;
 	for (const link of links) {
 		const finalLink = `${storybookURL}/iframe.html?id=${link}`;
 		await page.goto(finalLink, { waitUntil: 'domcontentloaded' });

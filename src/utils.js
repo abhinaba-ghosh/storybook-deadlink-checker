@@ -27,7 +27,7 @@ const fillCache = (cache, markdownOrJsx, filePath, filePathAbs) => {
 	);
 
 	markdownOrJsx.replace(
-		/\s+(?:(?:"(?:href|to|src|path=\/docs\/)":\s*)|(?:(?:href|to|src|kind)=))["']([^"']+?)['"]/g,
+		/\s+(?:(?:"(?:href|to|src|path=\/docs\/|path=\/story\/)":\s*)|(?:(?:href|to|src|kind)=))["']([^"']+?)['"]/g,
 		(str, match) => {
 			if (match && match.match) {
 				if (
@@ -41,7 +41,11 @@ const fillCache = (cache, markdownOrJsx, filePath, filePathAbs) => {
 						match = match.replace(/(\/)(#[^/]+)$/, '$1index.mdx$2');
 					}
 				}
-				if (str.includes('kind=') || str.includes('path=/docs/')) {
+				if (
+					str.includes('kind=') ||
+					str.includes('path=/docs/') ||
+					str.includes('path=/story/')
+				) {
 					const formattedLink = formatLiveLinks(match);
 					if (
 						!cache[filePathAbs].storybookLinks.includes(
@@ -151,7 +155,13 @@ const formatLiveLinks = (link) => {
 		link = link.replace('?path=/docs/', '');
 	}
 
+	if (link.includes('?path=/story/')) {
+		link = link.replace('?path=/story/', '');
+	}
+
 	const formattedLink = `${link}&viewMode=${linkPrefix}`;
+
+	console.log('formattedLink:', formattedLink);
 
 	return formattedLink;
 };

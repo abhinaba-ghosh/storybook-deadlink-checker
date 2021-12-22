@@ -28,6 +28,7 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 
 		// validate external links are valid using link - checker
 		externalLinks.forEach((link) => {
+			if (ignorePattern && isMatch(link, ignorePattern)) return;
 			try {
 				retus.get(link, {
 					throwHttpErrors: true,
