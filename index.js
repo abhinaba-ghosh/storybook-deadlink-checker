@@ -1,10 +1,12 @@
-import * as walkSync from 'walk-sync';
-import * as chalk from 'chalk';
-import * as yargs from 'yargs';
+#!/usr/bin/env node
+
+import walkSync from 'walk-sync';
+import chalk from 'chalk';
+import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { fetchLinks, filterArray } from './utils.js';
-import { checkLinks } from './checker.js';
+import { fetchLinks, filterArray } from './src/utils.js';
+import { checkLinks } from './src/checker.js';
 
 const options = yargs(hideBin(process.argv))
 	.options({

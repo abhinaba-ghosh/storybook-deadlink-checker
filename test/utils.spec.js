@@ -1,7 +1,6 @@
 import * as utils from '../src/utils.js';
 
 import { expect } from 'chai';
-import nock from 'nock';
 
 describe('utils', () => {
 	describe('#checkExternalLinks', () => {
@@ -24,8 +23,6 @@ describe('utils', () => {
 				ignorePattern,
 				errorFiles
 			);
-
-			console.log('errorFiles:', errorFiles);
 
 			expect(errorFiles).to.contain('file1.js');
 		});
@@ -63,8 +60,6 @@ describe('utils', () => {
 				ignorePattern,
 				errorFiles
 			);
-
-			console.log('errorFiles:', errorFiles);
 
 			expect(errorFiles).to.contain('file1.js');
 		});
