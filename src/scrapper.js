@@ -33,11 +33,13 @@ export const validateSidebarLinks = async (
 			return element.innerHTML;
 		});
 
+		const formatLink = link.replace(/&viewMode=(.*)/, '');
+
 		if (!storyRootContent && !docsRootContent) {
 			errorFiles.push(filePathAbs);
-			console.error(`\t[${logSymbols.error}] ${link}`);
+			console.error(`\t[${logSymbols.error}] ${formatLink}`);
 		} else {
-			console.log(`\t[${logSymbols.success}] ${link}`);
+			console.log(`\t[${logSymbols.success}] ${formatLink}`);
 		}
 	}
 };
