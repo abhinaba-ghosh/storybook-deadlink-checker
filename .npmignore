@@ -4,3 +4,5 @@ package-lock.json
 docs
 .git
 .prettierrc
+src/
+test/

@@ -1,16 +1,10 @@
-import { existsSync } from 'fs';
-import retus from 'retus';
 import chalk from 'chalk';
-import logSymbols from 'log-symbols';
-import micromatch from 'micromatch';
 import {
 	getScrapperInstance,
 	killScrapperInstance,
 	validateSidebarLinks,
 } from './scrapper.js';
-import { readFileIntoCache } from './utils.js';
-
-const isMatch = micromatch.isMatch;
+import { checkExternalLinks, checkInternalLinks } from './utils.js';
 
 export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 	const errorFiles = [];
@@ -27,59 +21,20 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 		console.info(chalk.cyan(`\nFILE: ${filePathAbs}`));
 
 		// validate external links are valid using link - checker
-		externalLinks.forEach((link) => {
-			if (ignorePattern && isMatch(link, ignorePattern)) return;
-			try {
-				retus.get(link, {
-					throwHttpErrors: true,
-				});
-				console.log(`\t[${logSymbols.success}]`, `${link}`);
-			} catch {
-				errorFiles.push(filePathAbs);
-				console.error(`\t[${logSymbols.error}]`, `${link}`);
-			}
-		});
+		checkExternalLinks(
+			filePathAbs,
+			externalLinks,
+			ignorePattern,
+			errorFiles
+		);
 
-		internalLinks.forEach((link) => {
-			if (ignorePattern && isMatch(link.original, ignorePattern)) return;
-
-			const [targetFile, targetId] = link.absolute.split('#');
-
-			if (
-				targetId &&
-				linkCache[targetFile] &&
-				linkCache[targetFile].ids[targetId]
-			) {
-				console.log(`\t[${logSymbols.success}]`, `#${targetId}`);
-			}
-
-			if (!linkCache[targetFile]) {
-				if (existsSync(targetFile)) {
-					readFileIntoCache(linkCache, targetFile);
-					console.log(
-						`\t[${logSymbols.success}]`,
-						targetId ? `#${targetId}` : link.original
-					);
-				} else {
-					errorFiles.push(filePathAbs);
-					console.error(
-						`\t[${logSymbols.error}]`,
-						targetId ? `#${targetId}` : link.original
-					);
-				}
-			}
-
-			if (
-				targetId &&
-				(!linkCache[targetFile] || !linkCache[targetFile].ids[targetId])
-			) {
-				errorFiles.push(filePathAbs);
-				console.error(
-					`\t[${logSymbols.error}]`,
-					targetId ? `#${targetId}` : link.original
-				);
-			}
-		});
+		checkInternalLinks(
+			linkCache,
+			filePathAbs,
+			internalLinks,
+			ignorePattern,
+			errorFiles
+		);
 
 		if (storybookURL) {
 			try {

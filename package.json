@@ -1,15 +1,18 @@
 {
 	"name": "storybook-deadlink-checker",
 	"version": "0.0.13",
-	"description": "checks the all of the hyperlinks in a markdown/storybook-markdown (md, mdx) file to determine if they are alive or dead",
-	"main": "index.js",
-	"bin": "./index.js",
+	"description": "checks the all of the hyperlinks in a storybook markdown file to determine if they are alive or dead",
+	"main": "dist/index.js",
+	"bin": "dist/index.js",
 	"scripts": {
-		"test": "node index.js"
+		"prebuild": "rimraf dist",
+		"build": "babel ./src --out-dir ./dist",
+		"test": "node node_modules/.bin/_mocha --full-trace"
 	},
 	"type": "module",
 	"keywords": [
 		"storybook",
+		"storybook-addon",
 		"markdown",
 		"md",
 		"link",
@@ -30,7 +33,7 @@
 	"homepage": "https://github.com/abhinaba-ghosh/storybook-deadlink-checker#readme",
 	"dependencies": {
 		"@mdx-js/mdx": "1.6.22",
-		"chalk": "5.0.0",
+		"chalk": "4.1.2",
 		"log-symbols": "5.1.0",
 		"micromatch": "4.0.4",
 		"puppeteer": "13.0.0",
@@ -41,7 +44,12 @@
 		"yargs": "17.0.1"
 	},
 	"devDependencies": {
-		"@babel/cli": "7.16.0",
-		"@babel/core": "7.16.5"
+		"@babel/core": "7.16.5",
+		"@babel/preset-env": "7.16.5",
+		"babel-cli": "6.26.0",
+		"babel-preset-es2015": "6.24.1",
+		"chai": "^4.3.4",
+		"mocha": "^9.1.3",
+		"nock": "^13.2.1"
 	}
 }

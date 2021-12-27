@@ -1,8 +1,13 @@
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import * as path from 'path';
 import mdx from '@mdx-js/mdx';
 import slugPlugin from 'remark-slug';
 import { remove } from 'unist-util-remove';
+import logSymbols from 'log-symbols';
+import retus from 'retus';
+import micromatch from 'micromatch';
+
+const isMatch = micromatch.isMatch;
 
 const remarkRemoveCodeNodes = () => {
 	return function transformer(tree) {
@@ -71,7 +76,7 @@ const fillCache = (cache, markdownOrJsx, filePath, filePathAbs) => {
 						absolute = path.resolve(path.join(match));
 					} else {
 						const result = filePath.match(/^(.+\/)[^/]+$/);
-						const filePathBase = result?.[1];
+						const filePathBase = result[1];
 						absolute = path.resolve(filePathBase + '/' + match);
 					}
 
@@ -144,7 +149,7 @@ export const filterArray = (array) => {
 	const uniqueSet = new Set(array);
 	return [...uniqueSet];
 };
-const formatLiveLinks = (link) => {
+export const formatLiveLinks = (link) => {
 	let linkPrefix = 'docs';
 
 	if (link.includes('story')) {
@@ -162,4 +167,73 @@ const formatLiveLinks = (link) => {
 	const formattedLink = `${link}&viewMode=${linkPrefix}`;
 
 	return formattedLink;
+};
+
+export const checkExternalLinks = (
+	filePathAbs,
+	externalLinks,
+	ignorePattern,
+	errorFiles
+) => {
+	externalLinks.forEach((link) => {
+		if (ignorePattern && isMatch(link, ignorePattern)) return;
+		try {
+			retus.get(link, {
+				throwHttpErrors: true,
+			});
+			console.log(`\t[${logSymbols.success}]`, `${link}`);
+		} catch (err) {
+			errorFiles.push(filePathAbs);
+			console.error(`\t[${logSymbols.error}]`, `${link}`);
+		}
+	});
+};
+
+export const checkInternalLinks = (
+	linkCache,
+	filePathAbs,
+	internalLinks,
+	ignorePattern,
+	errorFiles
+) => {
+	internalLinks.forEach((link) => {
+		if (ignorePattern && isMatch(link.original, ignorePattern)) return;
+
+		const [targetFile, targetId] = link.absolute.split('#');
+
+		if (
+			targetId &&
+			linkCache[targetFile] &&
+			linkCache[targetFile].ids[targetId]
+		) {
+			console.log(`\t[${logSymbols.success}]`, `#${targetId}`);
+		}
+
+		if (!linkCache[targetFile]) {
+			if (existsSync(targetFile)) {
+				readFileIntoCache(linkCache, targetFile);
+				console.log(
+					`\t[${logSymbols.success}]`,
+					targetId ? `#${targetId}` : link.original
+				);
+			} else {
+				errorFiles.push(filePathAbs);
+				console.error(
+					`\t[${logSymbols.error}]`,
+					targetId ? `#${targetId}` : link.original
+				);
+			}
+		}
+
+		if (
+			targetId &&
+			(!linkCache[targetFile] || !linkCache[targetFile].ids[targetId])
+		) {
+			errorFiles.push(filePathAbs);
+			console.error(
+				`\t[${logSymbols.error}]`,
+				targetId ? `#${targetId}` : link.original
+			);
+		}
+	});
 };
