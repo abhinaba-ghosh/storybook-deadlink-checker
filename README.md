@@ -8,7 +8,14 @@
 [![NPM release](https://img.shields.io/npm/v/storybook-deadlink-checker.svg 'NPM release')](https://www.npmjs.com/package/storybook-deadlink-checker)
 [![NPM Downloads](https://img.shields.io/npm/dt/storybook-deadlink-checker.svg?style=flat-square)](https://www.npmjs.com/package/storybook-deadlink-checker)
 
-A lightweight dead-link scrapper for md and mdx files. It also validates dead-links for [storybook](https://storybook.js.org/) stories where links are created using the [@storybook/addon-links](https://storybook.js.org/addons/@storybook/addon-links) package.
+A lightweight storybook addon that validates dead-links for [storybook](https://storybook.js.org/) stories where links are created using the [@storybook/addon-links](https://storybook.js.org/addons/@storybook/addon-links) package.
+
+## Highlights
+
+-   Supports node v8.x and above
+-   Validates all anchor/internal links in the stories (eg. #my-link)
+-   Validates all external links in the stories (eg. https://my-link.com)
+-   Validates all storybook link addons in the stories (eg. LinkTo kind='\*')
 
 ## Installation
 
