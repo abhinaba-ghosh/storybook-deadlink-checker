@@ -1,26 +1,18 @@
 {
 	"name": "storybook-deadlink-checker",
 	"version": "0.0.15",
-	"description": "checks the all of the hyperlinks in a storybook markdown file to determine if they are alive or dead",
+	"description": "a storybook addon that checks all of the hyperlinks in a storybook markdown file to determine if they are alive or dead",
 	"main": "index.js",
 	"bin": "index.js",
 	"scripts": {
-		"prebuild": "rimraf dist",
-		"build": "babel ./src --out-dir ./dist",
 		"test": "mocha --full-trace"
 	},
 	"type": "module",
 	"keywords": [
-		"storybook",
-		"storybook-addon",
-		"markdown",
-		"md",
-		"link",
-		"hyperlink",
-		"href",
-		"check",
-		"checker",
-		"broken link"
+		"storybook-addons",
+		"debug",
+		"broken link",
+		"test"
 	],
 	"author": "Abhinaba Ghosh <askabhinaba@gmail.com>",
 	"repository": {
