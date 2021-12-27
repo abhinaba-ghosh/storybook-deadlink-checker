@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./docs/logo.png"/>
+  <img src="./assets/logo.png"/>
 </p>
 
 # Storybook Deadlink Checker
