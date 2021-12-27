@@ -4,6 +4,10 @@
 
 # Storybook Deadlink Checker
 
+![example workflow](https://github.com/abhinaba-ghosh/storybook-deadlink-checker/actions/workflows/main.yml/badge.svg)
+[![NPM release](https://img.shields.io/npm/v/storybook-deadlink-checker.svg 'NPM release')](https://www.npmjs.com/package/storybook-deadlink-checker)
+[![NPM Downloads](https://img.shields.io/npm/dt/storybook-deadlink-checker.svg?style=flat-square)](https://www.npmjs.com/package/storybook-deadlink-checker)
+
 A lightweight dead-link scrapper for md and mdx files. It also validates dead-links for [storybook](https://storybook.js.org/) stories where links are created using the [@storybook/addon-links](https://storybook.js.org/addons/@storybook/addon-links) package.
 
 ## Installation
