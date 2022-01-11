@@ -33,8 +33,9 @@ yarn add --dev storybook-deadlink-checker
 $ npx storybook-deadlink-checker [dir] [storybook-url] [fileIgnorePattern] [onlyFail]
 
 Options:
-  --version                   Show version number                      [boolean]
-  --dir, --directory          directory path                 [string] [required]
+  --version                   Show version number                       [boolean]
+  --file, --file              file path                                 [string]
+  --dir, --directory          directory path                            [string]
   --url, --storybook-url      storybook live or local build url         [string]
   --ignore, --ignore-pattern  ignore pattern                            [string]
   --onlyFail, --only-fail     only show failed links  [boolean] [default: false]
@@ -73,6 +74,12 @@ $ npx storybook-deadlink-checker --dir="./path/to/folder" --url="http://localhos
 
 ```
 $ npx storybook-deadlink-checker --dir="./path/to/folder" --url="http://localhost:9009" --onlyFail
+```
+
+### Ignore special links
+
+```
+$ npx storybook-deadlink-checker --dir="./path/to/folder" --url="http://localhost:9009" --ignore="url-pattern-1,url-pattern-2..."
 ```
 
 ## Tell me your issues
