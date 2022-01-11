@@ -178,7 +178,16 @@ export const checkExternalLinks = (
 	externalLinks.forEach((link) => {
 		if (ignorePattern && isMatch(link, ignorePattern)) return;
 		try {
-			retus.get(link);
+			const { statusCode } = retus.get(link, { throwHttpErrors: false });
+			//temp fix for unauthorized external links
+			if (
+				statusCode !== 200 &&
+				statusCode !== 201 &&
+				statusCode !== 403 &&
+				statusCode !== 429
+			) {
+				throw new Error(`status code received ${statusCode}`);
+			}
 			console.log(`\t[${logSymbols.success}]`, `${link}`);
 		} catch (err) {
 			errorFiles.push(filePathAbs);

@@ -9,7 +9,7 @@ describe('utils', () => {
 				'file1.js': {
 					externalLinks: [
 						'https://google.com',
-						'https://api.github.com',
+						'https://httpstat.us/500',
 					],
 				},
 			};

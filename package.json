@@ -1,11 +1,11 @@
 {
 	"name": "storybook-deadlink-checker",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "a storybook addon that checks all of the hyperlinks in a storybook markdown file to determine if they are alive or dead",
 	"main": "index.js",
 	"bin": "index.js",
 	"scripts": {
-		"test": "mocha --full-trace"
+		"test": "mocha --full-trace --timeout 10000 --reporter spec"
 	},
 	"type": "module",
 	"keywords": [
