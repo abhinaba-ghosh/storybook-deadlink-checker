@@ -178,13 +178,12 @@ export const checkExternalLinks = (
 	externalLinks.forEach((link) => {
 		if (ignorePattern && isMatch(link, ignorePattern)) return;
 		try {
-			retus.get(link, {
-				throwHttpErrors: true,
-			});
+			retus.get(link);
 			console.log(`\t[${logSymbols.success}]`, `${link}`);
 		} catch (err) {
 			errorFiles.push(filePathAbs);
 			console.error(`\t[${logSymbols.error}]`, `${link}`);
+			console.error(`\terror message: ${err.message}`);
 		}
 	});
 };

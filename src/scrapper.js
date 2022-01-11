@@ -1,5 +1,8 @@
 import puppeteer from 'puppeteer';
 import logSymbols from 'log-symbols';
+import micromatch from 'micromatch';
+
+const isMatch = micromatch.isMatch;
 
 export const getScrapperInstance = async () => {
 	const browser = await puppeteer.launch({
@@ -19,10 +22,14 @@ export const validateSidebarLinks = async (
 	storybookURL,
 	links,
 	filePathAbs,
+	ignorePattern,
 	errorFiles
 ) => {
 	const page = await browser;
 	for (const link of links) {
+		// terminate if the link is ignored by --ignore flag
+		if (ignorePattern && isMatch(link, ignorePattern)) return;
+
 		const finalLink = `${storybookURL}/iframe.html?id=${link}`;
 		await page.goto(finalLink, { waitUntil: 'domcontentloaded' });
 
