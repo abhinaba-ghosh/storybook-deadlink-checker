@@ -43,6 +43,7 @@ export const checkLinks = async (linkCache, storybookURL, ignorePattern) => {
 					storybookURL,
 					storybookLinks,
 					filePathAbs,
+					ignorePattern,
 					errorFiles
 				);
 			} catch (err) {

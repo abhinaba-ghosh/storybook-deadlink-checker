@@ -14,7 +14,11 @@ const options = yargs(hideBin(process.argv))
 			alias: 'directory',
 			description: 'directory path',
 			type: 'string',
-			required: true,
+		},
+		file: {
+			alias: 'file',
+			description: 'file path',
+			type: 'string',
 		},
 		url: {
 			alias: 'storybook-url',
@@ -34,19 +38,32 @@ const options = yargs(hideBin(process.argv))
 		},
 	})
 	.check((argv) => {
-		if (!argv.dir) {
-			throw new Error(`${chalk.red('Missing required argument:')} dir`);
+		if (!argv.dir && !argv.file) {
+			throw new Error(`${chalk.red('Missing required :')} dir/file`);
 		}
 		return true;
 	})
 	.help().argv;
 
-const dir = options.dir;
+let dir = options.dir;
+const file = options.file;
 const storybookURL = options.url;
-const ignorePattern = options.ignore;
+const ignorePattern = options.ignore
+	? options.ignore.split(',')
+	: options.ignore;
 const onlyFail = options.onlyFail;
 
-const filePaths = walkSync(dir, { directories: false });
+// fetch the filepaths from directory or standalone file
+let filePaths = [];
+
+if (file) {
+	const fileName = file.replace(/^.*[\\\/]/, '');
+	filePaths.push(fileName);
+	dir = file.replace(/[^\\\/]*$/, '');
+} else {
+	filePaths = walkSync(dir, { directories: false });
+}
+
 const linkObject = fetchLinks(dir, filePaths);
 
 process.exitCode = 0;
