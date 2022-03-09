@@ -164,6 +164,11 @@ export const formatLiveLinks = (link) => {
 		link = link.replace('?path=/story/', '');
 	}
 
+	if(link.includes('http') || link.includes('https')){
+		link = link.match(/^(([^:\/\s]+):\/?\/?([^\/\s@]*@)?([^\/@:]*)?:?(\d+)?)?(\/[^?]*)?(\?([^#]*))?(#[\s\S]*)?$/)[6];
+		link = link.replace('/','');
+	}
+
 	const formattedLink = `${link}&viewMode=${linkPrefix}`;
 
 	return formattedLink;
